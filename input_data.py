@@ -1,6 +1,6 @@
-import tensorflow as tf
 import scipy.io as sio
 import numpy as np
+import time
 
 def flattenImages(images):
 	num_images = len(images[0][0])
@@ -53,13 +53,13 @@ def convertToOneHot(labels, num_classes):
 class DataSet:
     def __init__(self, inputs, targets):
         # Make sure inputs and targets have same number of data points
-        assert inputs.shape[0] == targets.shape[0]
-        self._num_examples = inputs.shape[0]
+		assert inputs.shape[0] == targets.shape[0]
+		self._num_examples = inputs.shape[0]
 
-        self._inputs = inputs
-        self._targets = targets
-        self._epochs_completed = 0
-        self._index_in_epoch = 0
+		self._inputs = inputs
+		self._targets = targets
+		self._epochs_completed = 0
+		self._index_in_epoch = 0
 
     def inputs(self):
         return self._inputs
@@ -97,27 +97,45 @@ class DataSet:
 
         return self._inputs[start:end], self._targets[start:end]
 
-NUM_CLASSES = 7
+def read_data_sets():
+	class DataSets(object):
+		pass
 
-# Load the training data
-mat_contents = sio.loadmat('labeled_images.mat')
-train_labels = mat_contents['tr_labels']
-train_identities = mat_contents['tr_identity']
-train_images = mat_contents['tr_images']
+	NUM_CLASSES = 7
+	start = time.time()
+	data_sets = DataSets()
 
-# Load the test data
-mat_contents = sio.loadmat('public_test_images.mat')
-test_images = mat_contents['public_test_images']
-test_set_length = len(test_images[0][0])
+	# Load the training data
+	mat_contents = sio.loadmat('labeled_images.mat')
+	train_labels = mat_contents['tr_labels']
+	train_identities = mat_contents['tr_identity']
+	train_images = mat_contents['tr_images']
 
-# Flatten images
-test_images = flattenImages(test_images)
-train_images = flattenImages(train_images)
+	# Load the test data
+	mat_contents = sio.loadmat('public_test_images.mat')
+	test_images = mat_contents['public_test_images']
+	test_set_length = len(test_images[0][0])
 
-# Split train into validation set of size ~ test_set_length
-train_images, train_labels, validation_images, validation_labels = splitSet(train_images,
-	train_labels, train_identities, test_set_length)
+	# Flatten images
+	test_images = flattenImages(test_images)
+	train_images = flattenImages(train_images)
 
-# Convert labels to one hot vectors
-train_labels = convertToOneHot(train_labels, NUM_CLASSES)
-validation_labels = convertToOneHot(validation_labels, NUM_CLASSES)
+	# Split train into validation set of size ~ test_set_length
+	train_images, train_labels, validation_images, validation_labels = splitSet(
+		train_images,
+		train_labels,
+		train_identities,
+		test_set_length)
+
+	# Convert labels to one hot vectors
+	train_labels = convertToOneHot(train_labels, NUM_CLASSES)
+	validation_labels = convertToOneHot(validation_labels, NUM_CLASSES)
+
+	# Setup the matrixes into an accessible data set class
+	data_sets.train_set = DataSet(train_images, train_labels)
+	data_sets.validation_set = DataSet(validation_images, validation_labels)
+	data_sets.test_set = DataSet(test_images, np.zeros((len(test_images), NUM_CLASSES)))
+
+	print('Finished setting up data! Took {} seconds'.format(time.time() - start))
+
+	return data_sets
