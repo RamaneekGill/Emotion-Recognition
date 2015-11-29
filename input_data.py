@@ -50,6 +50,53 @@ def convertToOneHot(labels, num_classes):
 
 	return one_hot
 
+class DataSet:
+    def __init__(self, inputs, targets):
+        # Make sure inputs and targets have same number of data points
+        assert inputs.shape[0] == targets.shape[0]
+        self._num_examples = inputs.shape[0]
+
+        self._inputs = inputs
+        self._targets = targets
+        self._epochs_completed = 0
+        self._index_in_epoch = 0
+
+    def inputs(self):
+        return self._inputs
+
+    def targets(self):
+        return self._targets
+
+    def num_examples(self):
+        return self._num_examples
+
+    def epochs_completed(self):
+        return self._epochs_completed
+
+    def next_batch(self, batch_size = 100):
+        CONST_RANDOM_SEED = 20151129
+        np.random.seed(CONST_RANDOM_SEED)
+
+        start = self._index_in_epoch
+        self._index_in_epoch += batch_size
+
+        if self._index_in_epoch > self._num_examples:
+            # Finished epoch
+            self._epochs_completed += 1
+            # Shuffle data
+            perm = np.arange(self._num_examples)
+            np.random.shuffle(perm)
+            self._inputs = self._inputs[perm]
+            self._targets = self._targets[perm]
+            # Start next epoch
+            start = 0
+            self._index_in_epoch = batch_size
+            assert batch_size <= self._num_examples
+
+        end = self._index_in_epoch
+
+        return self._inputs[start:end], self._targets[start:end]
+
 NUM_CLASSES = 7
 
 # Load the training data
