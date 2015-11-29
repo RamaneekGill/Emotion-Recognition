@@ -11,7 +11,7 @@ def flatten_images(images):
 
 	return np.array(flattened_images)
 
-def splitSet(train_images, train_identities, test_set_length):
+def splitSet(train_images, train_labels, train_identities, test_set_length):
 	# Find how many images each identity has
 	identities = dict()
 	for identity in train_identities:
@@ -21,22 +21,26 @@ def splitSet(train_images, train_identities, test_set_length):
 	identities_to_use_as_validation = []
 	count = 0
 	for identity in train_identities:
-		if count + identities[identity[0]]:
+		if count + identities[identity[0]] > test_set_length:
 			continue
 		count += identities[identity[0]]
 		identities_to_use_as_validation.append(identity[0])
 
 
-	train_set = []
-	validation_set = []
+	train_inputs = []
+	train_targets = []
+	validation_inputs = []
+	validation_targets = []
 
 	for i in range(len(train_images)):
 		if train_identities[i][0] in identities_to_use_as_validation:
-			validation_set.append(train_images[i])
+			validation_inputs.append(train_images[i])
+			validation_targets.append(train_labels[i])
 		else:
-			train_set.append(train_images[i])
+			train_inputs.append(train_images[i])
+			train_targets.append(train_labels[i])
 
-	return np.array(train_set), np.array(validation_set)
+	return np.array(train_inputs), np.array(train_targets), np.array(validation_inputs), np.array(validation_targets)
 
 
 # Load the training data
@@ -55,6 +59,7 @@ test_images = flatten_images(test_images)
 train_images = flatten_images(train_images)
 
 # Split train into validation set of size ~ test_set_length
-train_images, validation_images = splitSet(train_images, train_identities, test_set_length)
+train_images, train_labels, validation_images, validation_labels = splitSet(train_images,
+	train_labels, train_identities, test_set_length)
 
-print(test_images.shape, train_images.shape, validation_images.shape)
+print(test_images.shape, train_images.shape, train_labels.shape, validation_images.shape, validation_labels.shape)
