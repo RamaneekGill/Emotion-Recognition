@@ -74,8 +74,8 @@ class DataSet:
         return self._epochs_completed
 
     def next_batch(self, batch_size = 100):
-        CONST_RANDOM_SEED = 20151129
-        np.random.seed(CONST_RANDOM_SEED)
+        # CONST_RANDOM_SEED = 20151129
+        # np.random.seed(CONST_RANDOM_SEED)
 
         start = self._index_in_epoch
         self._index_in_epoch += batch_size

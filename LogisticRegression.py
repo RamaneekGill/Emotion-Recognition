@@ -8,9 +8,9 @@ import time
 class LogisticRegression():
 	def __init__(self, train_dataset, validation_dataset):
 		# The default hyperparameters of the model
-		self.setLearningRate(0.001)
-		self.setEpochs(100)
-		self.setBatchSize(50)
+		self.setLearningRate(0.0001)
+		self.setEpochs(3000)
+		self.setBatchSize(100)
 		self.setDisplayStep(1)
 
 		# The datasets to use
@@ -152,3 +152,51 @@ if __name__ == "__main__":
 	plt.legend()
 	plt.show()
 	raw_input('Press Enter to exit.')
+
+	logreg = LogisticRegression(datasets.train_set, datasets.validation_set)
+	logreg.train()
+	logreg.useSigmoidActivation()
+	logreg.useSigmoidLoss()
+
+	plt.figure(1)
+	plt.clf()
+	plt.plot(range(logreg.getEpochs()), logreg.train_set_accuracies, '-r', label='training set accuracy')
+	plt.plot(range(logreg.getEpochs()), logreg.validation_set_accuracies, '-b', label='validation set accuracy')
+	plt.xlabel('Epochs')
+	plt.ylabel('Classification Error')
+	plt.title('Classification Error While Training Using Sigmoid')
+	plt.legend()
+	plt.show()
+	raw_input('Press Enter to exit.')
+
+	# num_pixels = logreg.train_dataset.inputs().shape[1]
+	# num_classes = logreg.train_dataset.targets().shape[1]
+	# x = tf.placeholder(tf.float32, [None, num_pixels])
+	# y = tf.placeholder(tf.float32, [None, num_classes])
+	#
+	# w = tf.Variable(tf.random_normal([num_pixels, num_classes], stddev=0.01))
+	# b = tf.Variable(tf.random_normal([num_classes], stddev=0.01))
+	#
+	# model = tf.matmul(x, w) + b
+	# activation = tf.nn.softmax(model)
+	#
+	# cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(model, y)) # compute mean cross entropy (softmax is applied internally)
+	# train_op = tf.train.GradientDescentOptimizer(0.05).minimize(cost) # construct optimizer
+	# predict_op = tf.argmax(model, 1) # at predict time, evaluate the argmax of the logistic regression
+	#
+	# sess = tf.Session()
+	# init = tf.initialize_all_variables()
+	# sess.run(init)
+	#
+	# num_batches = int(logreg.train_dataset.num_examples() / 50)
+	# avg_cost = 0.0
+	# correct_prediction = tf.equal(tf.argmax(activation, 1), tf.argmax(y, 1))
+	# accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+	#
+	# for i in range(100):
+	# 	for batch in range(num_batches):
+	# 		batch_xs, batch_ys = logreg.train_dataset.next_batch(20)
+	# 		sess.run(train_op, feed_dict={x: batch_xs, y: batch_ys})
+	# 		avg_cost += sess.run(cost, feed_dict={x: batch_xs, y: batch_ys}) / num_batches
+	#
+	# 	print sess.run(accuracy, feed_dict={x: logreg.validation_dataset.inputs(), y: logreg.validation_dataset.targets()})
