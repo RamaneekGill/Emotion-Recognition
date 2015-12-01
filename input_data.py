@@ -27,6 +27,8 @@ def splitSet(train_images, train_labels, train_identities, test_set_length):
 		identities_to_use_as_validation.append(identity[0])
 
 
+	identities_to_use_as_validation = train_identities[:int(len(train_identities)*0.15)]
+
 	train_inputs = []
 	train_targets = []
 	validation_inputs = []
@@ -131,10 +133,17 @@ def read_data_sets():
 	train_labels = convertToOneHot(train_labels, NUM_CLASSES)
 	validation_labels = convertToOneHot(validation_labels, NUM_CLASSES)
 
+	# Normalize the images
+	sd = np.sqrt(np.var(train_images) + 0.01)
+	train_images = (train_images - np.mean(train_images)) / sd
+	sd = np.sqrt(np.var(validation_images) + 0.01)
+	validation_images = (validation_images - np.mean(validation_images)) / sd
+
 	# Setup the matrixes into an accessible data set class
 	data_sets.train_set = DataSet(train_images, train_labels)
 	data_sets.validation_set = DataSet(validation_images, validation_labels)
 	data_sets.test_set = DataSet(test_images, np.zeros((len(test_images), NUM_CLASSES)))
+
 
 	print('Finished setting up data! Took {} seconds'.format(time.time() - start))
 

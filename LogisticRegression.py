@@ -8,7 +8,7 @@ import time
 class LogisticRegression():
 	def __init__(self, train_dataset, validation_dataset):
 		# The default hyperparameters of the model
-		self.setLearningRate(0.0001)
+		self.setLearningRate(0.1)
 		self.setEpochs(3000)
 		self.setBatchSize(100)
 		self.setDisplayStep(1)
