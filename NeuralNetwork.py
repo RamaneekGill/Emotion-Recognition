@@ -25,7 +25,7 @@ def testNetwork(num_hidden_units, decay, retain_input, retain_hidden):
 	LEARNING_RATE = 0.005
 	DECAY = decay
 	MOMENTUM = 0.1
-	EPOCHS = 500
+	EPOCHS = 1001
 	BATCH_SIZE = 100
 	RETAIN_INPUT = retain_input
 	RETAIN_HIDDEN = retain_hidden
