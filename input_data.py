@@ -1,4 +1,5 @@
 import scipy.io as sio
+from sklearn.decomposition import RandomizedPCA
 import numpy as np
 import time
 
@@ -138,6 +139,10 @@ def read_data_sets():
 	train_images = (train_images - np.mean(train_images)) / sd
 	sd = np.sqrt(np.var(validation_images) + 0.01)
 	validation_images = (validation_images - np.mean(validation_images)) / sd
+
+	pca = RandomizedPCA(n_components=15)
+	train_images = pca.fit_transform(train_images)
+	validation_images = pca.fit_transform(validation_images)
 
 	# Setup the matrixes into an accessible data set class
 	data_sets.train_set = DataSet(train_images, train_labels)

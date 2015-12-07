@@ -94,8 +94,8 @@ class MidpointNormalize(Normalize):
 
 ##############################################################################
 # Constants
-PCA_COMPONENTS = 5
-GRID_SIZE = 3
+PCA_COMPONENTS = 10
+GRID_SIZE = 5
 start = time.time()
 
 # Load the datset
@@ -105,8 +105,8 @@ datasets = input_data_svm.read_data_sets()
 X = np.vstack((datasets.train_set.inputs(), datasets.validation_set.inputs()))
 y = np.hstack((datasets.train_set.targets(), datasets.validation_set.targets()))
 
-X = X[:]
-y = y[:]
+X = X[:len(X)*0.5]
+y = y[:len(y)*0.5]
 
 # Reduce the dimensionality of the dataset
 print("Applying PCA to reduce dimensions")
