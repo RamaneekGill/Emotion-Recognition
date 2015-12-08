@@ -76,6 +76,7 @@ from sklearn.svm import SVC
 from sklearn.preprocessing import StandardScaler
 from sklearn.datasets import load_iris
 from sklearn.cross_validation import StratifiedShuffleSplit
+from sklearn.cross_validation import check_cv
 from sklearn.grid_search import GridSearchCV
 from sklearn.decomposition import RandomizedPCA
 
@@ -95,7 +96,7 @@ class MidpointNormalize(Normalize):
 ##############################################################################
 # Constants
 PCA_COMPONENTS = 10
-GRID_SIZE = 5
+GRID_SIZE = 13
 start = time.time()
 
 # Load the datset
@@ -105,8 +106,12 @@ datasets = input_data_svm.read_data_sets()
 X = np.vstack((datasets.train_set.inputs(), datasets.validation_set.inputs()))
 y = np.hstack((datasets.train_set.targets(), datasets.validation_set.targets()))
 
-X = X[:len(X)*0.5]
-y = y[:len(y)*0.5]
+# X = datasets.train_set.inputs()
+# y = datasets.train_set.targets()
+
+
+X = X[:]
+y = y[:]
 
 # Reduce the dimensionality of the dataset
 print("Applying PCA to reduce dimensions")
@@ -129,7 +134,7 @@ print('Start training the model')
 C_range = np.logspace(-2, 10, GRID_SIZE)
 gamma_range = np.logspace(-9, 3, GRID_SIZE)
 param_grid = dict(gamma=gamma_range, C=C_range)
-cv = StratifiedShuffleSplit(y, n_iter=5, test_size=0.2, random_state=2015)
+cv = StratifiedShuffleSplit(y, n_iter=5, test_size=0.1, random_state=2015)
 grid = GridSearchCV(SVC(), param_grid=param_grid, cv=cv)
 grid.fit(X, y)
 
