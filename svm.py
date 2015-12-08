@@ -95,7 +95,7 @@ class MidpointNormalize(Normalize):
 
 ##############################################################################
 # Constants
-PCA_COMPONENTS = 10
+PCA_COMPONENTS = 150
 GRID_SIZE = 13
 start = time.time()
 
@@ -115,8 +115,9 @@ y = y[:]
 
 # Reduce the dimensionality of the dataset
 print("Applying PCA to reduce dimensions")
-pca = RandomizedPCA(n_components=PCA_COMPONENTS)
-X = pca.fit_transform(X)
+pca = RandomizedPCA(n_components=PCA_COMPONENTS, whiten=True).fit(X)
+# eigenfaces = pca.componenets_reshape((PCA_COMPONENTS, h, w))
+X = pca.transform(X)
 print("Finished PCA preprocessing")
 
 # Normalize the data
